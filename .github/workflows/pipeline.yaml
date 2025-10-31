@@ -28,7 +28,6 @@ jobs:
           pull: true
           tags: |
             cezarique/sitepersonal:latest
-            cezarique/sitepersonal:${{ github.sha }}
           cache-from: type=registry,ref=cezarique/sitepersonal:cache
           cache-to: type=registry,ref=cezarique/sitepersonal:cache,mode=max
           
@@ -41,7 +40,7 @@ jobs:
           curl -sSf -X POST "$COOLIFY_URL/api/v1/deploy" \
             -H "Authorization: Bearer $COOLIFY_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "{\"uuid\":\"$COOLIFY_UUID\",\"tag\":\"${GITHUB_SHA}\",\"force\":true}"
+            -d "{\"uuid\":\"$COOLIFY_UUID\",\"force\":true}"
 
 
 
