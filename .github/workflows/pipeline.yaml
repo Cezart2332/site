@@ -39,8 +39,10 @@ jobs:
           push: true
           tags: cezarique/sitepersonal:latest
           
-      - name: curl
+      - name: Trigger Coolify deploy (curl action)
         uses: sozo-design/curl@v1.0.2
         with:
-          args: -X GET "${{secrets.COOLIFY_DOMAIN}}/api/v1/deploy?uuid=${{secrets.COOLIFY_UUID}}&force=false"  
-          -H "Authorization: Bearer ${{secrets.COOLIFY_TOKEN}}"
+          args: >
+            -X GET "${{ secrets.COOLIFY_DOMAIN }}/api/v1/deploy?uuid=${{ secrets.COOLIFY_UUID }}&force=true"
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}"
+
