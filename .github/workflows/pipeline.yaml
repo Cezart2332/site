@@ -25,17 +25,21 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: cezarique/sitepersonal:latest
+          pull: true
+          tags: |
+            cezarique/sitepersonal:latest
+            cezarique/sitepersonal:${{ github.sha }}
+          cache-from: type=registry,ref=cezarique/sitepersonal:cache
+          cache-to: type=registry,ref=cezarique/sitepersonal:cache,mode=max
           
       - name: Trigger Coolify deploy
         env:
-          COOLIFY_URL: ${{ secrets.COOLIFY_DOMAIN }}   # ex: https://acoomh.ro  sau http://89.41.182.64:8000
-          COOLIFY_UUID: ${{ secrets.COOLIFY_UUID }}
+          COOLIFY_URL: ${{ secrets.COOLIFY_DOMAIN }}
           COOLIFY_TOKEN: ${{ secrets.COOLIFY_TOKEN }}
         run: |
           curl -sSf -X POST "$COOLIFY_URL/api/v1/deploy" \
             -H "Authorization: Bearer $COOLIFY_TOKEN" \
             -H "Content-Type: application/json" \
-            -d "{\"uuid\":\"$COOLIFY_UUID\",\"force\":true}"
+            -d '{"tag":"'"${{ github.sha }}"'","force":true}'
 
 
