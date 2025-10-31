@@ -85,7 +85,7 @@ function App() {
         </nav>
         <div className="hero-content">
           <p className="eyebrow">Full Stack Developer · Cloud Enthusiast</p>
-          <h1>Turliu Cezar-Mihai</h1>
+          <h1>Turliu Cezar</h1>
           <p className="tagline">
             21-year-old Computer Science student crafting delightful web and mobile experiences, deploying with confidence, and iterating fast.
           </p>
