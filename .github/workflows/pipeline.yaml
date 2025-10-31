@@ -17,13 +17,6 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies
-        run: |
-          npm ci
-
-      - name: build
-        run: npm run build
-
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
