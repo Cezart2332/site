@@ -38,7 +38,7 @@ function App() {
       summary:
         'Cross-platform mobile app and .NET API powering curated wellness content with real production deployment.',
       stack: ['React Native', '.NET', 'MySQL', 'REST API'],
-      link: 'https://www.acoomh.ro',
+      link: 'https://acoomh.ro',
     },
     {
       title: 'Dan Fost Anxios',
