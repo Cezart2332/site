@@ -12,11 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: Set up Node JS
-        uses: actions/setup-node@v5
-        with:
-          node-version: 22
-
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -26,7 +21,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           push: true
