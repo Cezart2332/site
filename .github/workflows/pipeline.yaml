@@ -38,3 +38,9 @@ jobs:
         with:
           push: true
           tags: cezarique/sitepersonal:latest
+          
+      - name: curl
+        uses: sozo-design/curl@v1.0.2
+        with:
+          args: curl -X GET "${{secrets.COOLIFY_DOMAIN}}/api/v1/deploy?uuid=${{secrets.COOLIFY_UUID}}&force=false"  
+          -H "Authorization: Bearer ${{secrets.COOLIFY_TOKEN}}"
