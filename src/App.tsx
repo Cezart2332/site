@@ -1,72 +1,123 @@
 import './App.css'
+import {
+  FaGithub,
+  FaLinkedin,
+  FaEnvelope,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaTrophy,
+  FaMedal,
+  FaExternalLinkAlt,
+  FaCode,
+  FaServer,
+  FaDatabase,
+  FaWrench,
+  FaBriefcase,
+  FaGraduationCap,
+  FaAward,
+  FaUser,
+  FaFolder,
+} from 'react-icons/fa'
 
 function App() {
   const skills = [
     {
       category: 'Frontend',
-      items: ['React', 'React Native', 'HTML & CSS'],
+      icon: <FaCode />,
+      items: ['React', 'React Native', 'HTML', 'CSS', 'JavaScript'],
     },
     {
       category: 'Backend',
-      items: ['Node.js (Express.js)', 'Flask', '.NET', 'Java', 'Python'],
+      icon: <FaServer />,
+      items: ['ASP.NET', 'C#', 'Node.js', 'Python'],
     },
     {
-      category: 'Databases & Cloud',
-      items: ['PostgreSQL', 'MySQL', 'Docker', 'AWS', 'Coolify'],
+      category: 'Databases',
+      icon: <FaDatabase />,
+      items: ['MySQL', 'PostgreSQL'],
     },
     {
       category: 'DevOps & Tools',
-      items: ['Git', 'GitHub Actions', 'Linux', 'CI/CD'],
+      icon: <FaWrench />,
+      items: ['Docker', 'Git', 'CI/CD', 'Linux', 'Networking'],
     },
   ]
 
   const projects = [
     {
-      title: 'Ecommerce Website',
-      summary:
-        'A full-stack electronics store with product management, secure checkout, and responsive UI.',
-      stack: ['HTML', 'CSS', 'JavaScript', '.NET', 'MySQL'],
-    },
-    {
-      title: 'BudgetMaker',
-      summary:
-        'Desktop finance tracker that stores income and expenses with expressive MySQL-backed insights.',
-      stack: ['C#', 'MySQL'],
-    },
-    {
-      title: 'AcoomH App',
-      summary:
-        'Cross-platform mobile app and .NET API powering curated wellness content with real production deployment.',
-      stack: ['React Native', '.NET', 'MySQL', 'REST API'],
-      link: 'https://acoomh.ro/',
-    },
-    {
       title: 'Dan Fost Anxios',
       summary:
-        'Mental health support app streaming real-time content via a custom Node.js + Express backend.',
-      stack: ['React Native', 'Node.js', 'Express.js'],
+        'Mobile application for anxiety management with challenges and audio content. Deployed APIs and published on both App Store and Google Play.',
+      stack: ['React Native', 'Node.js', 'MySQL'],
+      link: 'https://play.google.com/store/apps/details?id=com.cartealuidan.danfostanxios',
+      linkLabel: 'Play Store',
+      isGithub: false,
+    },
+    {
+      title: 'MyPasswordVault',
+      summary:
+        'Web app for managing passwords with zero-knowledge architecture — the server never accesses plaintext passwords. Features 2FA and email alerts for new-location logins.',
+      stack: ['React', 'ASP.NET', 'PostgreSQL'],
+      link: 'https://mypasswordvault.cloud/',
+      linkLabel: 'Live Site',
+      isGithub: false,
+    },
+    {
+      title: 'AcoomH',
+      summary:
+        'App for restaurants and coffee shops to manage reservations, list menus, and attract new customers. Won special award at ESTIC 2025.',
+      stack: ['React Native', 'ASP.NET', 'MySQL'],
+      link: 'https://github.com/Cezart2332/acum-h',
+      linkLabel: 'GitHub',
+      isGithub: true,
     },
   ]
 
-  const certificates = ['SQL', 'REST API', 'C# Basic', 'React']
-
-  const languages = [
-    { name: 'Romanian', level: 'Native' },
-    { name: 'English', level: 'Professional Working Proficiency' },
+  const competitions = [
+    {
+      placement: '1st Place',
+      event: 'ETST 2024 – Business',
+      period: 'October 2024 – December 2024',
+      project: 'LocX',
+      description:
+        'Developed a business plan for an intelligent locker system for ship containers. Conducted competitor analysis and pitched to jury, developing business strategy skills.',
+    },
+    {
+      placement: 'Special Award',
+      event: 'ESTIC 2025 – Tech',
+      period: 'May 2025',
+      project: 'AcoomH',
+      description:
+        'Developed AcoomH, an app for restaurants and coffee shops to manage reservations, optimizing administrative workflows and improving operational efficiency.',
+    },
   ]
+
+  const certificates = ['React', 'C#', 'SQL Basic', 'SQL Intermediate', 'JavaScript', 'REST API']
 
   const education = [
     {
-      period: '10/2023 – present',
+      period: 'September 2023 – July 2026',
       institution: 'Facultatea de Matematica si Informatica "Ovidius"',
       location: 'Constanta, Romania',
-      detail: 'B.Sc. Computer Science (in progress)',
+      degree: "Bachelor's Degree in Computer Science",
+      highlights: [
+        'Year 1 – GPA 9.70/10: Data Structures and Algorithms, Object-Oriented Programming, Calculus, Linear Algebra',
+        'Year 2 – GPA 8.90/10: Operating Systems, Web Application Development, Python-based Numerical Analysis, Computational Geometry',
+      ],
     },
+  ]
+
+  const experience = [
     {
-      period: '09/2019 – 07/2023',
-      institution: 'Colegiu Comercial Carol I',
-      location: 'Constanta, Romania',
-      detail: 'High School Diploma',
+      role: 'Trainer',
+      company: 'Impact Academies',
+      location: 'Constanta',
+      period: 'June 2025 – Present',
+      highlights: [
+        'Taught kids basic and advanced computer science concepts, algorithms, game creation, and AI & ML using Scratch and Python',
+        'Integrated gamification and coding challenges to increase engagement and motivation',
+        "Provided individual feedback and monitored progress, contributing to children's development of digital skills",
+      ],
     },
   ]
 
@@ -76,81 +127,124 @@ function App() {
         <nav className="nav">
           <div className="logo">Cezar Turliu</div>
           <div className="nav-links">
-            <a href="#profile">Profile</a>
+            <a href="#about">About</a>
+            <a href="#experience">Experience</a>
             <a href="#skills">Skills</a>
             <a href="#projects">Projects</a>
+            <a href="#competitions">Competitions</a>
             <a href="#education">Education</a>
             <a href="#contact">Contact</a>
           </div>
+          <div className="nav-social">
+            <a href="https://github.com/Cezart2332" target="_blank" rel="noreferrer" aria-label="GitHub">
+              <FaGithub />
+            </a>
+            <a href="https://linkedin.com/in/cezar-mihai-turliu-75a05a263" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+              <FaLinkedin />
+            </a>
+          </div>
         </nav>
         <div className="hero-content">
-          <p className="eyebrow">Full Stack Developer · Cloud Enthusiast</p>
+          <p className="eyebrow">Full-Stack Developer · Trainer · Final Year CS Student</p>
           <h1>Turliu Cezar-Mihai</h1>
           <p className="tagline">
-            21-year-old Computer Science student crafting delightful web and mobile experiences, deploying with confidence, and iterating fast.
+            Passionate about building full-stack web and mobile products, containerized deployments, and keeping systems secure — comfortable on both Linux and Windows.
           </p>
           <div className="hero-actions">
             <a className="primary" href="mailto:cezarturliu25@gmail.com">
-              Let&apos;s collaborate
+              <FaEnvelope /> Get in touch
             </a>
             <a className="secondary" href="https://github.com/Cezart2332" target="_blank" rel="noreferrer">
-              View GitHub
+              <FaGithub /> GitHub
             </a>
           </div>
           <div className="quick-info">
-            <span>Constanta, Romania</span>
-            <span>Since Oct 15, 2004</span>
-            <span>
-              <a href="tel:+40774544099">+40 774 544 099</a>
-            </span>
-            <span>
-              <a href="https://linkedin.com/in/cezar-mihai-turliu-75a05a263" target="_blank" rel="noreferrer">
-                LinkedIn
-              </a>
-            </span>
+            <span><FaMapMarkerAlt /> Constanta / Bucharest, Romania</span>
+            <a href="tel:+40774544099"><FaPhone /> +40 774 544 099</a>
+            <a href="mailto:cezarturliu25@gmail.com"><FaEnvelope /> cezarturliu25@gmail.com</a>
+            <a href="https://linkedin.com/in/cezar-mihai-turliu-75a05a263" target="_blank" rel="noreferrer">
+              <FaLinkedin /> LinkedIn
+            </a>
           </div>
         </div>
       </header>
 
       <main>
-        <section className="section" id="profile">
+        <section className="section" id="about">
           <div className="section-heading">
-            <h2>Profile</h2>
-            <p>
-              I design and build full stack products with a focus on usability, reliability, and fast iteration. Experienced across React, React Native, .NET, Node.js, Flask, and cloud-native tooling including Docker and AWS.
-            </p>
+            <h2><FaUser /> About Me</h2>
           </div>
+          <p className="about-text">
+            Final year 21-year-old student passionate about computer science with experience in
+            Full-Stack web development using C#, React, React Native, and SQL databases. Experienced
+            with Docker for containerization, Git for version control, and GitHub Actions for CI/CD
+            pipelines. Comfortable in both Linux and Windows, with an interest in networking and
+            system security.
+          </p>
           <div className="cards-grid three">
             <article className="card">
-              <h3>Full Stack Mindset</h3>
+              <h3>Full-Stack Development</h3>
               <p>
-                Comfortable shipping features end-to-end: UI, API design, data modeling, deployment, and observability.
+                Shipping features end-to-end: UI, API design, data modeling, and deployment across
+                web and mobile platforms.
               </p>
             </article>
             <article className="card">
-              <h3>Cloud & DevOps Savvy</h3>
+              <h3>DevOps &amp; Security</h3>
               <p>
-                Builds automated pipelines with GitHub Actions, delivers containerized workloads to Coolify and AWS.
+                Containerized workloads with Docker, automated pipelines via GitHub Actions, and
+                security-first design patterns.
               </p>
             </article>
             <article className="card">
-              <h3>Collaborative & Curious</h3>
+              <h3>Teaching &amp; Mentoring</h3>
               <p>
-                Thrives in team settings using Git best practices, code reviews, and continuous learning to raise the bar.
+                Currently training kids in computer science fundamentals, algorithms, and AI
+                concepts at Impact Academies.
               </p>
             </article>
           </div>
         </section>
 
-        <section className="section muted" id="skills">
+        <section className="section muted" id="experience">
           <div className="section-heading">
-            <h2>Skills Snapshot</h2>
-            <p>Tech stack on repeat for high-impact delivery.</p>
+            <h2><FaBriefcase /> Experience</h2>
+          </div>
+          <div className="timeline">
+            {experience.map((entry) => (
+              <article key={entry.company} className="timeline-item">
+                <div className="timeline-marker" aria-hidden />
+                <div className="timeline-body">
+                  <span className="timeline-period">{entry.period}</span>
+                  <h3>
+                    {entry.role}
+                    <span className="timeline-company"> @ {entry.company}</span>
+                  </h3>
+                  <p className="timeline-location">
+                    <FaMapMarkerAlt /> {entry.location}
+                  </p>
+                  <ul className="highlight-list">
+                    {entry.highlights.map((h, i) => (
+                      <li key={i}>{h}</li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="section" id="skills">
+          <div className="section-heading">
+            <h2><FaCode /> Skills</h2>
           </div>
           <div className="skills-grid">
             {skills.map((group) => (
               <div key={group.category} className="skill-card">
-                <h3>{group.category}</h3>
+                <div className="skill-card-header">
+                  <span className="skill-icon">{group.icon}</span>
+                  <h3>{group.category}</h3>
+                </div>
                 <ul>
                   {group.items.map((item) => (
                     <li key={item}>{item}</li>
@@ -159,33 +253,19 @@ function App() {
               </div>
             ))}
           </div>
-          <div className="meta-grid">
-            <div className="meta-card">
-              <h3>Certificates</h3>
-              <ul>
-                {certificates.map((certificate) => (
-                  <li key={certificate}>{certificate}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="meta-card">
-              <h3>Languages</h3>
-              <ul>
-                {languages.map((language) => (
-                  <li key={language.name}>
-                    <span>{language.name}</span>
-                    <span>{language.level}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+          <div className="certs-section">
+            <h3 className="certs-heading"><FaAward /> Certifications</h3>
+            <ul className="pill-list">
+              {certificates.map((cert) => (
+                <li key={cert}>{cert}</li>
+              ))}
+            </ul>
           </div>
         </section>
 
-        <section className="section" id="projects">
+        <section className="section muted" id="projects">
           <div className="section-heading">
-            <h2>Projects</h2>
-            <p>Selected builds that highlight real-world impact and breadth.</p>
+            <h2><FaFolder /> Projects</h2>
           </div>
           <div className="cards-grid two">
             {projects.map((project) => (
@@ -193,8 +273,9 @@ function App() {
                 <div className="card-header">
                   <h3>{project.title}</h3>
                   {project.link && (
-                    <a href={project.link} target="_blank" rel="noreferrer">
-                      Visit ↗
+                    <a href={project.link} target="_blank" rel="noreferrer" className="project-link">
+                      {project.isGithub ? <FaGithub /> : <FaExternalLinkAlt />}
+                      <span>{project.linkLabel}</span>
                     </a>
                   )}
                 </div>
@@ -209,20 +290,49 @@ function App() {
           </div>
         </section>
 
+        <section className="section" id="competitions">
+          <div className="section-heading">
+            <h2><FaTrophy /> Competitions</h2>
+          </div>
+          <div className="cards-grid two">
+            {competitions.map((comp) => (
+              <article key={comp.event} className="comp-card">
+                <div className="comp-badge">
+                  {comp.placement === '1st Place' ? (
+                    <FaTrophy className="comp-icon gold" />
+                  ) : (
+                    <FaMedal className="comp-icon silver" />
+                  )}
+                  <span className="comp-placement">{comp.placement}</span>
+                </div>
+                <h3>{comp.event}</h3>
+                <span className="timeline-period">{comp.period}</span>
+                <p className="comp-project">Project: <strong>{comp.project}</strong></p>
+                <p>{comp.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="section muted" id="education">
           <div className="section-heading">
-            <h2>Education</h2>
-            <p>Foundation rooted in computer science and business-focused problem solving.</p>
+            <h2><FaGraduationCap /> Education</h2>
           </div>
           <div className="timeline">
             {education.map((entry) => (
               <article key={entry.institution} className="timeline-item">
                 <div className="timeline-marker" aria-hidden />
-                <div>
+                <div className="timeline-body">
                   <span className="timeline-period">{entry.period}</span>
-                  <h3>{entry.institution}</h3>
-                  <p className="timeline-location">{entry.location}</p>
-                  <p>{entry.detail}</p>
+                  <h3>{entry.degree}</h3>
+                  <p className="timeline-location">
+                    <FaMapMarkerAlt /> {entry.institution}, {entry.location}
+                  </p>
+                  <ul className="highlight-list">
+                    {entry.highlights.map((h, i) => (
+                      <li key={i}>{h}</li>
+                    ))}
+                  </ul>
                 </div>
               </article>
             ))}
@@ -231,16 +341,20 @@ function App() {
 
         <section className="section" id="contact">
           <div className="cta">
-            <h2>Let&apos;s build what&apos;s next</h2>
+            <h2>Get In Touch</h2>
             <p>
-              Whether it&apos;s a new product, mentorship opportunity, or internship, I&apos;m ready to collaborate and deliver.
+              Open to internships, junior full-stack roles, and project collaborations. Let&apos;s
+              build something meaningful together.
             </p>
             <div className="cta-actions">
               <a className="primary" href="mailto:cezarturliu25@gmail.com">
-                Email me
+                <FaEnvelope /> Email Me
               </a>
               <a className="secondary" href="https://linkedin.com/in/cezar-mihai-turliu-75a05a263" target="_blank" rel="noreferrer">
-                Message on LinkedIn
+                <FaLinkedin /> LinkedIn
+              </a>
+              <a className="secondary" href="https://github.com/Cezart2332" target="_blank" rel="noreferrer">
+                <FaGithub /> GitHub
               </a>
             </div>
           </div>
@@ -248,7 +362,7 @@ function App() {
       </main>
 
       <footer className="footer">
-        <p>© {new Date().getFullYear()} Turliu Cezar-Mihai. Crafted with purpose.</p>
+        <p>© {new Date().getFullYear()} Turliu Cezar-Mihai</p>
       </footer>
     </div>
   )
