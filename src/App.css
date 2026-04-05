@@ -4,9 +4,10 @@
   overflow-x: clip;
   color: var(--text-strong);
   isolation: isolate;
-  --hover-surface-duration: 400ms;
-  --hover-transform-duration: 300ms;
-  --hover-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --hover-surface-duration: 500ms;
+  --hover-transform-duration: 500ms;
+  --hover-ease: cubic-bezier(0.25, 0.9, 0.3, 1);
+  --hover-color-ease: cubic-bezier(0.3, 0.82, 0.33, 1);
 }
 
 .fluid-page::before {
@@ -175,6 +176,10 @@
   letter-spacing: 0.045em;
   white-space: nowrap;
   color: var(--text-strong);
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform var(--hover-transform-duration) var(--hover-ease),
+    color var(--hover-surface-duration) var(--hover-color-ease);
 }
 
 .nav-links {
@@ -191,7 +196,10 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--text-muted);
-  transition: color var(--hover-surface-duration) var(--hover-ease);
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform var(--hover-transform-duration) var(--hover-ease),
+    color var(--hover-surface-duration) var(--hover-color-ease);
 }
 
 .nav-links a::after {
@@ -204,7 +212,7 @@
   border-radius: 99px;
   transform: scaleX(0);
   transform-origin: left center;
-  transition: transform var(--hover-surface-duration) var(--hover-ease);
+  transition: transform calc(var(--hover-transform-duration) - 40ms) var(--hover-ease);
   background: var(--marker-gradient);
 }
 
@@ -230,11 +238,15 @@
   background: var(--button-secondary);
   border: 1px solid var(--button-secondary-border);
   box-shadow: var(--button-secondary-shadow);
+  cursor: pointer;
+  transform: translate3d(0, 0, 0);
   transition:
-    border-color var(--hover-surface-duration) var(--hover-ease),
-    background-color var(--hover-surface-duration) var(--hover-ease),
-    box-shadow var(--hover-surface-duration) var(--hover-ease),
-    color var(--hover-surface-duration) var(--hover-ease);
+    transform var(--hover-transform-duration) var(--hover-ease),
+    border-color var(--hover-surface-duration) var(--hover-color-ease),
+    background-color var(--hover-surface-duration) var(--hover-color-ease),
+    box-shadow calc(var(--hover-surface-duration) + 40ms) var(--hover-ease),
+    color var(--hover-surface-duration) var(--hover-color-ease);
+  
 }
 
 .nav-social a {
@@ -309,12 +321,8 @@
 }
 
 .magnetic {
-  --magnetic-x: 0px;
-  --magnetic-y: 0px;
-  --magnetic-lift: 0px;
-  transform: translate3d(var(--magnetic-x), calc(var(--magnetic-y) + var(--magnetic-lift)), 0);
-  will-change: transform;
-  transition: transform var(--hover-transform-duration) var(--hover-ease);
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .primary,
@@ -329,11 +337,13 @@
   border: 1px solid transparent;
   font-weight: 600;
   letter-spacing: 0.015em;
+  transform: translate3d(0, 0, 0);
   transition:
-    box-shadow var(--hover-surface-duration) var(--hover-ease),
-    background-color var(--hover-surface-duration) var(--hover-ease),
-    border-color var(--hover-surface-duration) var(--hover-ease),
-    color var(--hover-surface-duration) var(--hover-ease);
+    transform var(--hover-transform-duration) var(--hover-ease),
+    box-shadow calc(var(--hover-surface-duration) + 60ms) var(--hover-ease),
+    background-color var(--hover-surface-duration) var(--hover-color-ease),
+    border-color var(--hover-surface-duration) var(--hover-color-ease),
+    color var(--hover-surface-duration) var(--hover-color-ease);
 }
 
 .primary {
@@ -371,10 +381,12 @@
 }
 
 .quick-info a {
+  transform: translate3d(0, 0, 0);
   transition:
-    border-color var(--hover-surface-duration) var(--hover-ease),
-    background-color var(--hover-surface-duration) var(--hover-ease),
-    color var(--hover-surface-duration) var(--hover-ease);
+    transform var(--hover-transform-duration) var(--hover-ease),
+    border-color var(--hover-surface-duration) var(--hover-color-ease),
+    background-color var(--hover-surface-duration) var(--hover-color-ease),
+    color var(--hover-surface-duration) var(--hover-color-ease);
 }
 
 main {
@@ -454,9 +466,9 @@ main {
   box-shadow: var(--shadow-soft);
   transform: translate3d(0, 0, 0);
   transition:
-    transform calc(var(--hover-surface-duration) - 40ms) var(--hover-ease),
-    box-shadow var(--hover-surface-duration) var(--hover-ease),
-    border-color var(--hover-surface-duration) var(--hover-ease);
+    transform calc(var(--hover-transform-duration) + 20ms) var(--hover-ease),
+    box-shadow calc(var(--hover-surface-duration) + 90ms) var(--hover-ease),
+    border-color var(--hover-surface-duration) var(--hover-color-ease);
 }
 
 .card h3,
@@ -558,10 +570,12 @@ main {
   color: var(--project-link-text);
   border: 1px solid var(--project-link-border);
   background: var(--project-link-bg);
+  transform: translate3d(0, 0, 0);
   transition:
-    border-color var(--hover-surface-duration) var(--hover-ease),
-    background-color var(--hover-surface-duration) var(--hover-ease),
-    color var(--hover-surface-duration) var(--hover-ease);
+    transform var(--hover-transform-duration) var(--hover-ease),
+    border-color var(--hover-surface-duration) var(--hover-color-ease),
+    background-color var(--hover-surface-duration) var(--hover-color-ease),
+    color var(--hover-surface-duration) var(--hover-color-ease);
 }
 
 .comp-badge {
@@ -723,24 +737,37 @@ main {
 }
 
 @media (hover: hover) and (pointer: fine) {
+  .magnetic:is(:hover, :focus-visible) {
+    will-change: transform;
+  }
+
   .card:hover,
   .project-card:hover,
   .skill-card:hover,
   .comp-card:hover {
-    transform: translate3d(0, -6px, 0) scale(1.012);
+    transform: translate3d(0, -5px, 0);
     border-color: var(--button-secondary-border);
-    box-shadow: var(--shadow-strong);
+    box-shadow: var(--shadow-soft);
   }
 
-  .primary:hover,
-  .secondary:hover,
+  .brand:hover,
+  .nav-links a:hover,
+  .nav-links a:focus-visible,
   .theme-toggle:hover,
   .nav-social a:hover,
   .project-link:hover,
-  .quick-info a:hover,
-  .brand:hover,
-  .nav-links a:hover {
-    --magnetic-lift: -2px;
+  .quick-info a:hover {
+    transform: translate3d(0, -5px, 0);
+  }
+
+  .primary:hover,
+  .secondary:hover {
+    transform: translate3d(0, -5px, 0);
+    box-shadow: var(--button-primary-shadow);
+  }
+
+  .secondary:hover {
+    box-shadow: var(--button-secondary-shadow);
   }
 
   .theme-toggle:hover,
@@ -870,7 +897,7 @@ main {
   .theme-toggle,
   .magnetic {
     animation: none !important;
-    transition-duration: 1ms !important;
+    transition-duration: 400ms !important;
   }
 
   .custom-cursor-ring,

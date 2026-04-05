@@ -357,28 +357,14 @@ function App() {
     section.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const handleMagneticMove = (event: ReactMouseEvent<HTMLElement>) => {
-    if (!isFinePointer || shouldReduceMotion) {
-      return
-    }
-
-    const target = event.currentTarget
-    const bounds = target.getBoundingClientRect()
-    const offsetX = event.clientX - (bounds.left + bounds.width / 2)
-    const offsetY = event.clientY - (bounds.top + bounds.height / 2)
-    const maxOffsetX = Math.min(bounds.width * 0.16, 14)
-    const maxOffsetY = Math.min(bounds.height * 0.16, 10)
-    const magneticX = Math.max(-maxOffsetX, Math.min(maxOffsetX, offsetX * 0.14))
-    const magneticY = Math.max(-maxOffsetY, Math.min(maxOffsetY, offsetY * 0.14))
-
-    target.style.setProperty('--magnetic-x', `${magneticX}px`)
-    target.style.setProperty('--magnetic-y', `${magneticY}px`)
+  const handleMagneticMove = (_event: ReactMouseEvent<HTMLElement>) => {
+    // Magnetic tracking disabled: keep standard hover transitions only.
+    void _event
   }
 
-  const handleMagneticLeave = (event: ReactMouseEvent<HTMLElement>) => {
-    const target = event.currentTarget
-    target.style.setProperty('--magnetic-x', '0px')
-    target.style.setProperty('--magnetic-y', '0px')
+  const handleMagneticLeave = (_event: ReactMouseEvent<HTMLElement>) => {
+    // Magnetic tracking disabled: keep standard hover transitions only.
+    void _event
   }
 
   const toggleTheme = () => {
