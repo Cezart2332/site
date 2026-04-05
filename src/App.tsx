@@ -1,3 +1,6 @@
+import { useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react'
+import { AnimatePresence, motion, useMotionValue, useReducedMotion, useSpring } from 'framer-motion'
+import Lenis from 'lenis'
 import './App.css'
 import {
   FaGithub,
@@ -17,19 +20,78 @@ import {
   FaAward,
   FaUser,
   FaFolder,
+  FaMoon,
+  FaSun,
 } from 'react-icons/fa'
 
+type Theme = 'dark' | 'light'
+
+const heroTitleWords = ['Turliu', 'Cezar-Mihai']
+const navItems = [
+  { label: 'About', href: '#about' },
+  { label: 'Experience', href: '#experience' },
+  { label: 'Skills', href: '#skills' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Competitions', href: '#competitions' },
+  { label: 'Education', href: '#education' },
+  { label: 'Contact', href: '#contact' },
+]
+
+const fluidEase = [0.22, 1, 0.36, 1] as const
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 36 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.78,
+      ease: fluidEase,
+      when: 'beforeChildren',
+      staggerChildren: 0.09,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 18 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.54, ease: fluidEase },
+  },
+}
+
 function App() {
+  const shouldReduceMotion = useReducedMotion()
+  const lenisRef = useRef<Lenis | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isNavVisible, setIsNavVisible] = useState(true)
+  const [theme, setTheme] = useState<Theme>('dark')
+  const [isFinePointer, setIsFinePointer] = useState(false)
+  const [isCursorVisible, setIsCursorVisible] = useState(false)
+  const [isCursorInteractive, setIsCursorInteractive] = useState(false)
+  const [isCursorPressed, setIsCursorPressed] = useState(false)
+  const cursorVisibleRef = useRef(false)
+  const cursorInteractiveRef = useRef(false)
+
+  const cursorX = useMotionValue(-100)
+  const cursorY = useMotionValue(-100)
+  const cursorDotX = useSpring(cursorX, { stiffness: 560, damping: 44, mass: 0.08 })
+  const cursorDotY = useSpring(cursorY, { stiffness: 560, damping: 44, mass: 0.08 })
+  const cursorRingX = useSpring(cursorX, { stiffness: 260, damping: 30, mass: 0.22 })
+  const cursorRingY = useSpring(cursorY, { stiffness: 260, damping: 30, mass: 0.22 })
+
   const skills = [
     {
       category: 'Frontend',
       icon: <FaCode />,
-      items: ['React', 'React Native', 'HTML', 'CSS', 'JavaScript'],
+      items: ['React', 'React Native'],
     },
     {
       category: 'Backend',
       icon: <FaServer />,
-      items: ['ASP.NET', 'C#', 'Node.js', 'Python'],
+      items: ['ASP.NET', 'Node.js', 'Python'],
     },
     {
       category: 'Databases',
@@ -121,98 +183,502 @@ function App() {
     },
   ]
 
+  useEffect(() => {
+    const savedTheme = window.localStorage.getItem('ui-theme')
+    if (savedTheme === 'dark' || savedTheme === 'light') {
+      setTheme(savedTheme)
+      return
+    }
+
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    setTheme(prefersDark ? 'dark' : 'light')
+  }, [])
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    window.localStorage.setItem('ui-theme', theme)
+  }, [theme])
+
+  useEffect(() => {
+    const pointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)')
+
+    const syncFinePointer = () => {
+      setIsFinePointer(pointerQuery.matches)
+    }
+
+    syncFinePointer()
+    pointerQuery.addEventListener('change', syncFinePointer)
+
+    return () => {
+      pointerQuery.removeEventListener('change', syncFinePointer)
+    }
+  }, [])
+
+  useEffect(() => {
+    const useCustomCursor = isFinePointer && !shouldReduceMotion
+    document.body.classList.toggle('custom-cursor-enabled', useCustomCursor)
+
+    return () => {
+      document.body.classList.remove('custom-cursor-enabled')
+    }
+  }, [isFinePointer, shouldReduceMotion])
+
+  useEffect(() => {
+    if (!isFinePointer || shouldReduceMotion) {
+      cursorVisibleRef.current = false
+      cursorInteractiveRef.current = false
+      setIsCursorVisible(false)
+      setIsCursorInteractive(false)
+      setIsCursorPressed(false)
+      return
+    }
+
+    const interactiveSelector = 'a, button, [data-cursor="interactive"]'
+
+    const handleMouseMove = (event: globalThis.MouseEvent) => {
+      cursorX.set(event.clientX)
+      cursorY.set(event.clientY)
+
+      if (!cursorVisibleRef.current) {
+        cursorVisibleRef.current = true
+        setIsCursorVisible(true)
+      }
+
+      const interactiveTarget =
+        event.target instanceof Element ? event.target.closest(interactiveSelector) : null
+      const nextInteractive = Boolean(interactiveTarget)
+
+      if (nextInteractive !== cursorInteractiveRef.current) {
+        cursorInteractiveRef.current = nextInteractive
+        setIsCursorInteractive(nextInteractive)
+      }
+    }
+
+    const handleMouseLeave = () => {
+      cursorVisibleRef.current = false
+      cursorInteractiveRef.current = false
+      setIsCursorVisible(false)
+      setIsCursorInteractive(false)
+      setIsCursorPressed(false)
+    }
+
+    const handleMouseDown = () => {
+      setIsCursorPressed(true)
+    }
+
+    const handleMouseUp = () => {
+      setIsCursorPressed(false)
+    }
+
+    window.addEventListener('mousemove', handleMouseMove, { passive: true })
+    window.addEventListener('mousedown', handleMouseDown, { passive: true })
+    window.addEventListener('mouseup', handleMouseUp, { passive: true })
+    window.addEventListener('mouseleave', handleMouseLeave)
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mousedown', handleMouseDown)
+      window.removeEventListener('mouseup', handleMouseUp)
+      window.removeEventListener('mouseleave', handleMouseLeave)
+    }
+  }, [cursorX, cursorY, isFinePointer, shouldReduceMotion])
+
+  useEffect(() => {
+    const loadingTimer = window.setTimeout(() => {
+      setIsLoading(false)
+    }, 1300)
+
+    return () => {
+      window.clearTimeout(loadingTimer)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      return
+    }
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      smoothWheel: true,
+      wheelMultiplier: 0.95,
+      touchMultiplier: 1.2,
+      lerp: 0.08,
+      autoRaf: false,
+    })
+
+    lenisRef.current = lenis
+
+    let rafId = 0
+    const raf = (time: number) => {
+      lenis.raf(time)
+      rafId = window.requestAnimationFrame(raf)
+    }
+
+    rafId = window.requestAnimationFrame(raf)
+
+    return () => {
+      window.cancelAnimationFrame(rafId)
+      lenis.destroy()
+      lenisRef.current = null
+    }
+  }, [shouldReduceMotion])
+
+  useEffect(() => {
+    let previousScroll = window.scrollY
+
+    const handleScroll = () => {
+      const currentScroll = window.scrollY
+      const movingUp = currentScroll < previousScroll
+      setIsNavVisible(movingUp || currentScroll < 90)
+      previousScroll = currentScroll
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
+  const handleAnchorClick = (event: ReactMouseEvent<HTMLAnchorElement>, target: string) => {
+    const section = document.querySelector<HTMLElement>(target)
+    if (!section) {
+      return
+    }
+
+    event.preventDefault()
+
+    if (lenisRef.current) {
+      lenisRef.current.scrollTo(section, { offset: -108, duration: 1.1 })
+      return
+    }
+
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const handleMagneticMove = (event: ReactMouseEvent<HTMLElement>) => {
+    if (!isFinePointer || shouldReduceMotion) {
+      return
+    }
+
+    const target = event.currentTarget
+    const bounds = target.getBoundingClientRect()
+    const offsetX = event.clientX - (bounds.left + bounds.width / 2)
+    const offsetY = event.clientY - (bounds.top + bounds.height / 2)
+    const maxOffsetX = Math.min(bounds.width * 0.16, 14)
+    const maxOffsetY = Math.min(bounds.height * 0.16, 10)
+    const magneticX = Math.max(-maxOffsetX, Math.min(maxOffsetX, offsetX * 0.14))
+    const magneticY = Math.max(-maxOffsetY, Math.min(maxOffsetY, offsetY * 0.14))
+
+    target.style.setProperty('--magnetic-x', `${magneticX}px`)
+    target.style.setProperty('--magnetic-y', `${magneticY}px`)
+  }
+
+  const handleMagneticLeave = (event: ReactMouseEvent<HTMLElement>) => {
+    const target = event.currentTarget
+    target.style.setProperty('--magnetic-x', '0px')
+    target.style.setProperty('--magnetic-y', '0px')
+  }
+
+  const toggleTheme = () => {
+    setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'))
+  }
+
+  const nextThemeLabel = theme === 'dark' ? 'light' : 'dark'
+
   return (
-    <div className="page">
-      <header className="hero" id="top">
-        <nav className="nav">
-          <div className="logo">Cezar Turliu</div>
+    <div className="fluid-page">
+      <div className="ambient-orb orb-one" aria-hidden />
+      <div className="ambient-orb orb-two" aria-hidden />
+      <div className="ambient-orb orb-three" aria-hidden />
+
+      <AnimatePresence>
+        {isFinePointer && !shouldReduceMotion && (
+          <>
+            <motion.div
+              className={`custom-cursor-ring${isCursorVisible ? ' is-visible' : ''}${isCursorInteractive ? ' is-interactive' : ''}${isCursorPressed ? ' is-pressed' : ''}`}
+              style={{ x: cursorRingX, y: cursorRingY }}
+              aria-hidden
+            />
+            <motion.div
+              className={`custom-cursor-dot${isCursorVisible ? ' is-visible' : ''}${isCursorPressed ? ' is-pressed' : ''}`}
+              style={{ x: cursorDotX, y: cursorDotY }}
+              aria-hidden
+            />
+          </>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            className="preloader"
+            initial={{ opacity: 1 }}
+            exit={{
+              opacity: 0,
+              transition: { duration: 0.52, ease: fluidEase },
+            }}
+          >
+            <motion.div
+              className="preloader-door preloader-door-left"
+              initial={{ x: 0 }}
+              exit={{ x: '-112%', transition: { duration: 0.8, ease: fluidEase } }}
+            />
+            <motion.div
+              className="preloader-door preloader-door-right"
+              initial={{ x: 0 }}
+              exit={{ x: '112%', transition: { duration: 0.8, ease: fluidEase } }}
+            />
+            <motion.p
+              className="preloader-copy"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.55, ease: fluidEase }}
+            >
+              Welcome to my website
+            </motion.p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.header
+        className="floating-nav-shell"
+        initial={false}
+        animate={{ y: isNavVisible ? 0 : -130, opacity: isNavVisible ? 1 : 0.92 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 30, mass: 0.9 }}
+      >
+        <nav className="floating-nav" aria-label="Primary navigation">
+          <a
+            className="brand magnetic"
+            href="#top"
+            onClick={(event) => handleAnchorClick(event, '#top')}
+            onMouseMove={handleMagneticMove}
+            onMouseLeave={handleMagneticLeave}
+          >
+            Cezar Turliu
+          </a>
           <div className="nav-links">
-            <a href="#about">About</a>
-            <a href="#experience">Experience</a>
-            <a href="#skills">Skills</a>
-            <a href="#projects">Projects</a>
-            <a href="#competitions">Competitions</a>
-            <a href="#education">Education</a>
-            <a href="#contact">Contact</a>
+            {navItems.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="magnetic"
+                onClick={(event) => handleAnchorClick(event, item.href)}
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
+              >
+                <span>{item.label}</span>
+              </a>
+            ))}
           </div>
+          <button
+            type="button"
+            className="theme-toggle magnetic"
+            onClick={toggleTheme}
+            onMouseMove={handleMagneticMove}
+            onMouseLeave={handleMagneticLeave}
+            data-cursor="interactive"
+            aria-label={`Switch to ${nextThemeLabel} theme`}
+          >
+            {theme === 'dark' ? <FaSun /> : <FaMoon />}
+            <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
+          </button>
           <div className="nav-social">
-            <a href="https://github.com/Cezart2332" target="_blank" rel="noreferrer" aria-label="GitHub">
+            <a
+              href="https://github.com/Cezart2332"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="GitHub"
+              className="magnetic"
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
+            >
               <FaGithub />
             </a>
-            <a href="https://linkedin.com/in/cezar-mihai-turliu-75a05a263" target="_blank" rel="noreferrer" aria-label="LinkedIn">
+            <a
+              href="https://linkedin.com/in/cezar-mihai-turliu-75a05a263"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="LinkedIn"
+              className="magnetic"
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
+            >
               <FaLinkedin />
             </a>
           </div>
         </nav>
-        <div className="hero-content">
-          <p className="eyebrow">Full-Stack Developer · Trainer · Final Year CS Student</p>
-          <h1>Turliu Cezar-Mihai</h1>
-          <p className="tagline">
-            Passionate about building full-stack web and mobile products, containerized deployments, and keeping systems secure — comfortable on both Linux and Windows.
-          </p>
-          <div className="hero-actions">
-            <a className="primary" href="mailto:cezarturliu25@gmail.com">
+      </motion.header>
+
+      <header className="hero" id="top">
+        <motion.div
+          className="hero-panel"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 32, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.9, ease: fluidEase }}
+        >
+          <motion.p
+            className="eyebrow"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.2, ease: fluidEase }}
+          >
+            Full-Stack Developer • Trainer • Final Year CS Student
+          </motion.p>
+
+          <h1 className="hero-title">
+            {heroTitleWords.map((word, index) => (
+              <motion.span
+                key={word}
+                className="hero-word"
+                initial={shouldReduceMotion ? false : { opacity: 0, y: 28 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 170,
+                  damping: 18,
+                  delay: 0.28 + index * 0.12,
+                }}
+              >
+                {word}
+              </motion.span>
+            ))}
+          </h1>
+
+          <motion.p
+            className="tagline"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.44, ease: fluidEase }}
+          >
+            I build fluid full-stack products for web and mobile, with a strong focus on polished
+            UX, deployment reliability, and practical security.
+          </motion.p>
+
+          <motion.div
+            className="hero-actions"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 22 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.55, ease: fluidEase }}
+          >
+            <a
+              className="primary magnetic"
+              href="mailto:cezarturliu25@gmail.com"
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
+            >
               <FaEnvelope /> Get in touch
             </a>
-            <a className="secondary" href="https://github.com/Cezart2332" target="_blank" rel="noreferrer">
+            <a
+              className="secondary magnetic"
+              href="https://github.com/Cezart2332"
+              target="_blank"
+              rel="noreferrer"
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
+            >
               <FaGithub /> GitHub
             </a>
-          </div>
-          <div className="quick-info">
-            <span><FaMapMarkerAlt /> Constanta / Bucharest, Romania</span>
-            <a href="tel:+40774544099"><FaPhone /> +40 774 544 099</a>
-            <a href="mailto:cezarturliu25@gmail.com"><FaEnvelope /> cezarturliu25@gmail.com</a>
-            <a href="https://linkedin.com/in/cezar-mihai-turliu-75a05a263" target="_blank" rel="noreferrer">
+          </motion.div>
+
+          <motion.div
+            className="quick-info"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.67, ease: fluidEase }}
+          >
+            <span>
+              <FaMapMarkerAlt /> Constanta / Bucharest, Romania
+            </span>
+            <a href="tel:+40774544099" className="magnetic" onMouseMove={handleMagneticMove} onMouseLeave={handleMagneticLeave}>
+              <FaPhone /> +40 774 544 099
+            </a>
+            <a
+              href="mailto:cezarturliu25@gmail.com"
+              className="magnetic"
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
+            >
+              <FaEnvelope /> cezarturliu25@gmail.com
+            </a>
+            <a
+              href="https://linkedin.com/in/cezar-mihai-turliu-75a05a263"
+              target="_blank"
+              rel="noreferrer"
+              className="magnetic"
+              onMouseMove={handleMagneticMove}
+              onMouseLeave={handleMagneticLeave}
+            >
               <FaLinkedin /> LinkedIn
             </a>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </header>
 
       <main>
-        <section className="section" id="about">
-          <div className="section-heading">
-            <h2><FaUser /> About Me</h2>
-          </div>
-          <p className="about-text">
+        <motion.section
+          className="section"
+          id="about"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.28 }}
+        >
+          <motion.div className="section-heading" variants={itemVariants}>
+            <h2>
+              <FaUser /> About Me
+            </h2>
+          </motion.div>
+          <motion.p className="about-text" variants={itemVariants}>
             Final year 21-year-old student passionate about computer science with experience in
             Full-Stack web development using C#, React, React Native, and SQL databases. Experienced
             with Docker for containerization, Git for version control, and GitHub Actions for CI/CD
             pipelines. Comfortable in both Linux and Windows, with an interest in networking and
             system security.
-          </p>
+          </motion.p>
           <div className="cards-grid three">
-            <article className="card">
+            <motion.article className="card" variants={itemVariants}>
               <h3>Full-Stack Development</h3>
               <p>
                 Shipping features end-to-end: UI, API design, data modeling, and deployment across
                 web and mobile platforms.
               </p>
-            </article>
-            <article className="card">
+            </motion.article>
+            <motion.article className="card" variants={itemVariants}>
               <h3>DevOps &amp; Security</h3>
               <p>
                 Containerized workloads with Docker, automated pipelines via GitHub Actions, and
                 security-first design patterns.
               </p>
-            </article>
-            <article className="card">
+            </motion.article>
+            <motion.article className="card" variants={itemVariants}>
               <h3>Teaching &amp; Mentoring</h3>
               <p>
                 Currently training kids in computer science fundamentals, algorithms, and AI
                 concepts at Impact Academies.
               </p>
-            </article>
+            </motion.article>
           </div>
-        </section>
+        </motion.section>
 
-        <section className="section muted" id="experience">
-          <div className="section-heading">
-            <h2><FaBriefcase /> Experience</h2>
-          </div>
-          <div className="timeline">
+        <motion.section
+          className="section muted"
+          id="experience"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.25 }}
+        >
+          <motion.div className="section-heading" variants={itemVariants}>
+            <h2>
+              <FaBriefcase /> Experience
+            </h2>
+          </motion.div>
+          <motion.div className="timeline" variants={itemVariants}>
             {experience.map((entry) => (
-              <article key={entry.company} className="timeline-item">
+              <motion.article key={entry.company} className="timeline-item" variants={itemVariants}>
                 <div className="timeline-marker" aria-hidden />
                 <div className="timeline-body">
                   <span className="timeline-period">{entry.period}</span>
@@ -224,23 +690,32 @@ function App() {
                     <FaMapMarkerAlt /> {entry.location}
                   </p>
                   <ul className="highlight-list">
-                    {entry.highlights.map((h, i) => (
-                      <li key={i}>{h}</li>
+                    {entry.highlights.map((highlight) => (
+                      <li key={highlight}>{highlight}</li>
                     ))}
                   </ul>
                 </div>
-              </article>
+              </motion.article>
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
-        <section className="section" id="skills">
-          <div className="section-heading">
-            <h2><FaCode /> Skills</h2>
-          </div>
+        <motion.section
+          className="section"
+          id="skills"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.25 }}
+        >
+          <motion.div className="section-heading" variants={itemVariants}>
+            <h2>
+              <FaCode /> Skills
+            </h2>
+          </motion.div>
           <div className="skills-grid">
             {skills.map((group) => (
-              <div key={group.category} className="skill-card">
+              <motion.div key={group.category} className="skill-card" variants={itemVariants}>
                 <div className="skill-card-header">
                   <span className="skill-icon">{group.icon}</span>
                   <h3>{group.category}</h3>
@@ -250,30 +725,48 @@ function App() {
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
-              </div>
+              </motion.div>
             ))}
           </div>
-          <div className="certs-section">
-            <h3 className="certs-heading"><FaAward /> Certifications</h3>
+          <motion.div className="certs-section" variants={itemVariants}>
+            <h3 className="certs-heading">
+              <FaAward /> Certifications
+            </h3>
             <ul className="pill-list">
               {certificates.map((cert) => (
                 <li key={cert}>{cert}</li>
               ))}
             </ul>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
-        <section className="section muted" id="projects">
-          <div className="section-heading">
-            <h2><FaFolder /> Projects</h2>
-          </div>
+        <motion.section
+          className="section muted"
+          id="projects"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.25 }}
+        >
+          <motion.div className="section-heading" variants={itemVariants}>
+            <h2>
+              <FaFolder /> Projects
+            </h2>
+          </motion.div>
           <div className="cards-grid two">
             {projects.map((project) => (
-              <article key={project.title} className="project-card">
+              <motion.article key={project.title} className="project-card" variants={itemVariants}>
                 <div className="card-header">
                   <h3>{project.title}</h3>
                   {project.link && (
-                    <a href={project.link} target="_blank" rel="noreferrer" className="project-link">
+                    <a
+                      href={project.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="project-link magnetic"
+                      onMouseMove={handleMagneticMove}
+                      onMouseLeave={handleMagneticLeave}
+                    >
                       {project.isGithub ? <FaGithub /> : <FaExternalLinkAlt />}
                       <span>{project.linkLabel}</span>
                     </a>
@@ -285,18 +778,27 @@ function App() {
                     <li key={tech}>{tech}</li>
                   ))}
                 </ul>
-              </article>
+              </motion.article>
             ))}
           </div>
-        </section>
+        </motion.section>
 
-        <section className="section" id="competitions">
-          <div className="section-heading">
-            <h2><FaTrophy /> Competitions</h2>
-          </div>
+        <motion.section
+          className="section"
+          id="competitions"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.25 }}
+        >
+          <motion.div className="section-heading" variants={itemVariants}>
+            <h2>
+              <FaTrophy /> Competitions
+            </h2>
+          </motion.div>
           <div className="cards-grid two">
             {competitions.map((comp) => (
-              <article key={comp.event} className="comp-card">
+              <motion.article key={comp.event} className="comp-card" variants={itemVariants}>
                 <div className="comp-badge">
                   {comp.placement === '1st Place' ? (
                     <FaTrophy className="comp-icon gold" />
@@ -307,20 +809,31 @@ function App() {
                 </div>
                 <h3>{comp.event}</h3>
                 <span className="timeline-period">{comp.period}</span>
-                <p className="comp-project">Project: <strong>{comp.project}</strong></p>
+                <p className="comp-project">
+                  Project: <strong>{comp.project}</strong>
+                </p>
                 <p>{comp.description}</p>
-              </article>
+              </motion.article>
             ))}
           </div>
-        </section>
+        </motion.section>
 
-        <section className="section muted" id="education">
-          <div className="section-heading">
-            <h2><FaGraduationCap /> Education</h2>
-          </div>
-          <div className="timeline">
+        <motion.section
+          className="section muted"
+          id="education"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.25 }}
+        >
+          <motion.div className="section-heading" variants={itemVariants}>
+            <h2>
+              <FaGraduationCap /> Education
+            </h2>
+          </motion.div>
+          <motion.div className="timeline" variants={itemVariants}>
             {education.map((entry) => (
-              <article key={entry.institution} className="timeline-item">
+              <motion.article key={entry.institution} className="timeline-item" variants={itemVariants}>
                 <div className="timeline-marker" aria-hidden />
                 <div className="timeline-body">
                   <span className="timeline-period">{entry.period}</span>
@@ -329,36 +842,62 @@ function App() {
                     <FaMapMarkerAlt /> {entry.institution}, {entry.location}
                   </p>
                   <ul className="highlight-list">
-                    {entry.highlights.map((h, i) => (
-                      <li key={i}>{h}</li>
+                    {entry.highlights.map((highlight) => (
+                      <li key={highlight}>{highlight}</li>
                     ))}
                   </ul>
                 </div>
-              </article>
+              </motion.article>
             ))}
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
-        <section className="section" id="contact">
-          <div className="cta">
+        <motion.section
+          className="section"
+          id="contact"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.35 }}
+        >
+          <motion.div className="cta" variants={itemVariants}>
             <h2>Get In Touch</h2>
             <p>
               Open to internships, junior full-stack roles, and project collaborations. Let&apos;s
               build something meaningful together.
             </p>
             <div className="cta-actions">
-              <a className="primary" href="mailto:cezarturliu25@gmail.com">
+              <a
+                className="primary magnetic"
+                href="mailto:cezarturliu25@gmail.com"
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
+              >
                 <FaEnvelope /> Email Me
               </a>
-              <a className="secondary" href="https://linkedin.com/in/cezar-mihai-turliu-75a05a263" target="_blank" rel="noreferrer">
+              <a
+                className="secondary magnetic"
+                href="https://linkedin.com/in/cezar-mihai-turliu-75a05a263"
+                target="_blank"
+                rel="noreferrer"
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
+              >
                 <FaLinkedin /> LinkedIn
               </a>
-              <a className="secondary" href="https://github.com/Cezart2332" target="_blank" rel="noreferrer">
+              <a
+                className="secondary magnetic"
+                href="https://github.com/Cezart2332"
+                target="_blank"
+                rel="noreferrer"
+                onMouseMove={handleMagneticMove}
+                onMouseLeave={handleMagneticLeave}
+              >
                 <FaGithub /> GitHub
               </a>
             </div>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
       </main>
 
       <footer className="footer">

@@ -1,16 +1,118 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Fraunces:opsz,wght,SOFT@9..144,400..700,80&display=swap');
 
 :root {
-  font-family: 'Space Grotesk', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-base: 'Sora', 'Segoe UI', sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --bg-main: #02050c;
+  --bg-secondary: #071326;
+  --bg-tertiary: #0d1f3c;
+  --bg-radial-a: rgba(87, 161, 255, 0.22);
+  --bg-radial-b: rgba(76, 211, 201, 0.2);
+  --text-strong: #e7efff;
+  --text-muted: rgba(206, 220, 248, 0.84);
+  --text-soft: rgba(168, 186, 221, 0.72);
+  --glass-bg: rgba(11, 23, 46, 0.56);
+  --glass-bg-strong: rgba(8, 18, 36, 0.78);
+  --glass-border: rgba(124, 164, 236, 0.28);
+  --surface-muted: rgba(8, 20, 40, 0.52);
+  --hero-panel-bg: linear-gradient(154deg, rgba(14, 30, 58, 0.88), rgba(10, 23, 45, 0.74));
+  --hero-panel-border: rgba(137, 176, 244, 0.22);
+  --card-bg: linear-gradient(160deg, rgba(14, 29, 56, 0.88), rgba(9, 22, 43, 0.82));
+  --card-border: rgba(116, 158, 232, 0.22);
+  --chip-bg: rgba(13, 32, 60, 0.82);
+  --chip-border: rgba(122, 168, 241, 0.26);
+  --chip-text: rgba(208, 224, 252, 0.92);
+  --line-gradient: linear-gradient(180deg, rgba(80, 188, 170, 0.5), rgba(118, 154, 235, 0.56));
+  --marker-gradient: linear-gradient(150deg, #5cd9c6, #83a8ff);
+  --marker-halo: rgba(113, 205, 236, 0.28);
+  --button-primary: linear-gradient(145deg, #278fce, #2a74d3 46%, #35b5bf 96%);
+  --button-primary-border: rgba(125, 178, 245, 0.34);
+  --button-primary-shadow: 0 18px 30px rgba(17, 38, 73, 0.5);
+  --button-secondary: rgba(10, 28, 56, 0.62);
+  --button-secondary-border: rgba(130, 172, 241, 0.32);
+  --button-secondary-shadow: 0 12px 24px rgba(4, 11, 23, 0.45);
+  --quick-info-bg: rgba(9, 27, 54, 0.62);
+  --quick-info-border: rgba(119, 164, 236, 0.24);
+  --quick-info-text: rgba(211, 228, 252, 0.9);
+  --project-link-bg: rgba(11, 35, 64, 0.8);
+  --project-link-border: rgba(118, 163, 237, 0.3);
+  --project-link-text: rgba(170, 212, 255, 0.96);
+  --shadow-soft: 0 14px 28px rgba(3, 8, 19, 0.42);
+  --shadow-strong: 0 36px 70px rgba(2, 7, 16, 0.55);
+  --ambient-one: radial-gradient(circle at 35% 30%, rgba(171, 226, 255, 0.56), rgba(68, 124, 240, 0.46));
+  --ambient-two: radial-gradient(circle at 34% 34%, rgba(153, 237, 235, 0.54), rgba(36, 120, 170, 0.44));
+  --ambient-three: radial-gradient(circle at 40% 28%, rgba(183, 255, 247, 0.46), rgba(63, 142, 212, 0.36));
+  --preloader-door-bg: linear-gradient(180deg, #071224, #081831);
+  --preloader-door-border: rgba(122, 171, 248, 0.18);
+  --preloader-copy: rgba(159, 216, 255, 0.88);
+  --selection-bg: rgba(91, 168, 255, 0.66);
+  --cursor-core: #9af2e5;
+  --cursor-ring: rgba(152, 241, 228, 0.45);
+  --cursor-ring-active: rgba(130, 180, 255, 0.52);
+  color-scheme: dark;
+  font-family: var(--font-base);
   line-height: 1.6;
   font-weight: 400;
-  color: #f2f4ff;
-  background-color: #030712;
+  color: var(--text-strong);
+  background-color: var(--bg-main);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+:root[data-theme='light'] {
+  --bg-main: #d8dee8;
+  --bg-secondary: #e7edf7;
+  --bg-tertiary: #cfdbf2;
+  --bg-radial-a: rgba(121, 164, 235, 0.36);
+  --bg-radial-b: rgba(141, 204, 255, 0.35);
+  --text-strong: #102441;
+  --text-muted: rgba(34, 57, 92, 0.84);
+  --text-soft: rgba(41, 69, 111, 0.66);
+  --glass-bg: rgba(248, 252, 255, 0.56);
+  --glass-bg-strong: rgba(251, 254, 255, 0.72);
+  --glass-border: rgba(88, 118, 173, 0.24);
+  --surface-muted: rgba(232, 239, 250, 0.56);
+  --hero-panel-bg: linear-gradient(154deg, rgba(249, 253, 255, 0.76), rgba(232, 241, 255, 0.6));
+  --hero-panel-border: rgba(96, 130, 186, 0.2);
+  --card-bg: linear-gradient(160deg, rgba(247, 251, 255, 0.8), rgba(229, 238, 252, 0.62));
+  --card-border: rgba(100, 129, 186, 0.22);
+  --chip-bg: rgba(234, 242, 253, 0.75);
+  --chip-border: rgba(106, 141, 200, 0.26);
+  --chip-text: rgba(22, 48, 87, 0.9);
+  --line-gradient: linear-gradient(180deg, rgba(97, 148, 222, 0.45), rgba(119, 188, 225, 0.54));
+  --marker-gradient: linear-gradient(150deg, #5c86d6, #4daecf);
+  --marker-halo: rgba(108, 159, 225, 0.26);
+  --button-primary: linear-gradient(145deg, #3f79d6, #4d8de0 48%, #58c4d9 98%);
+  --button-primary-border: rgba(86, 130, 205, 0.32);
+  --button-primary-shadow: 0 15px 26px rgba(74, 106, 160, 0.32);
+  --button-secondary: rgba(244, 249, 255, 0.8);
+  --button-secondary-border: rgba(100, 138, 197, 0.31);
+  --button-secondary-shadow: 0 10px 22px rgba(94, 124, 172, 0.2);
+  --quick-info-bg: rgba(246, 251, 255, 0.75);
+  --quick-info-border: rgba(104, 139, 196, 0.24);
+  --quick-info-text: rgba(29, 56, 95, 0.88);
+  --project-link-bg: rgba(231, 241, 255, 0.76);
+  --project-link-border: rgba(93, 132, 196, 0.3);
+  --project-link-text: rgba(35, 76, 137, 0.94);
+  --shadow-soft: 0 12px 24px rgba(77, 106, 152, 0.14);
+  --shadow-strong: 0 30px 58px rgba(73, 105, 156, 0.2);
+  --ambient-one: radial-gradient(circle at 35% 30%, rgba(234, 245, 255, 0.85), rgba(119, 167, 239, 0.48));
+  --ambient-two: radial-gradient(circle at 34% 34%, rgba(226, 242, 255, 0.86), rgba(122, 186, 236, 0.46));
+  --ambient-three: radial-gradient(circle at 40% 28%, rgba(242, 250, 255, 0.85), rgba(132, 200, 235, 0.44));
+  --preloader-door-bg: linear-gradient(180deg, #f6faff, #eaf1fb);
+  --preloader-door-border: rgba(107, 139, 186, 0.2);
+  --preloader-copy: rgba(32, 74, 134, 0.88);
+  --selection-bg: rgba(76, 136, 213, 0.58);
+  --cursor-core: #2e69b3;
+  --cursor-ring: rgba(56, 108, 184, 0.36);
+  --cursor-ring-active: rgba(85, 151, 235, 0.42);
+  color-scheme: light;
 }
 
 *,
@@ -23,15 +125,32 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: radial-gradient(circle at 20% 20%, rgba(79, 70, 229, 0.25), transparent 55%),
-    radial-gradient(circle at 80% 10%, rgba(16, 185, 129, 0.2), transparent 45%),
-    #030712;
+  background:
+    radial-gradient(circle at 11% 12%, var(--bg-radial-a), transparent 39%),
+    radial-gradient(circle at 88% 9%, var(--bg-radial-b), transparent 34%),
+    linear-gradient(150deg, var(--bg-main), var(--bg-secondary) 48%, var(--bg-tertiary));
   color: inherit;
+  transition: background 380ms ease, color 280ms ease;
+}
+
+#root {
+  min-height: 100vh;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+::selection {
+  color: #f7fffc;
+  background: var(--selection-bg);
+}
+
+body.custom-cursor-enabled,
+body.custom-cursor-enabled a,
+body.custom-cursor-enabled button {
+  cursor: none;
 }
 
 img {
