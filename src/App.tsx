@@ -62,6 +62,19 @@ const itemVariants = {
   },
 }
 
+type ProjectLink = {
+  href: string
+  label: string
+  isGithub?: boolean
+}
+
+type Project = {
+  title: string
+  summary: string
+  stack: string[]
+  links: ProjectLink[]
+}
+
 function App() {
   const shouldReduceMotion = useReducedMotion()
   const lenisRef = useRef<Lenis | null>(null)
@@ -105,33 +118,47 @@ function App() {
     },
   ]
 
-  const projects = [
+  const projects: Project[] = [
     {
       title: 'Dan Fost Anxios',
       summary:
         'Mobile application for anxiety management with challenges and audio content. Deployed APIs and published on both App Store and Google Play.',
       stack: ['React Native', 'Node.js', 'MySQL'],
-      link: 'https://play.google.com/store/apps/details?id=com.cartealuidan.danfostanxios',
-      linkLabel: 'Play Store',
-      isGithub: false,
+      links: [
+        {
+          href: 'https://play.google.com/store/apps/details?id=com.cartealuidan.danfostanxios',
+          label: 'Play Store',
+        },
+        {
+          href: 'https://apps.apple.com/us/app/dan-un-fost-anxios/id6755789426',
+          label: 'App Store',
+        },
+      ],
     },
     {
       title: 'MyPasswordVault',
       summary:
         'Web app for managing passwords with zero-knowledge architecture — the server never accesses plaintext passwords. Features 2FA and email alerts for new-location logins.',
       stack: ['React', 'ASP.NET', 'PostgreSQL'],
-      link: 'https://mypasswordvault.cloud/',
-      linkLabel: 'Live Site',
-      isGithub: false,
+      links: [
+        {
+          href: 'https://mypasswordvault.cloud/',
+          label: 'Live Site',
+        },
+      ],
     },
     {
       title: 'AcoomH',
       summary:
         'App for restaurants and coffee shops to manage reservations, list menus, and attract new customers. Won special award at ESTIC 2025.',
       stack: ['React Native', 'ASP.NET', 'MySQL'],
-      link: 'https://github.com/Cezart2332/acum-h',
-      linkLabel: 'GitHub',
-      isGithub: true,
+      links: [
+        {
+          href: 'https://github.com/Cezart2332/acum-h',
+          label: 'GitHub',
+          isGithub: true,
+        },
+      ],
     },
   ]
 
@@ -744,19 +771,22 @@ function App() {
               <motion.article key={project.title} className="project-card" variants={itemVariants}>
                 <div className="card-header">
                   <h3>{project.title}</h3>
-                  {project.link && (
-                    <a
-                      href={project.link}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="project-link magnetic"
-                      onMouseMove={handleMagneticMove}
-                      onMouseLeave={handleMagneticLeave}
-                    >
-                      {project.isGithub ? <FaGithub /> : <FaExternalLinkAlt />}
-                      <span>{project.linkLabel}</span>
-                    </a>
-                  )}
+                  <div className="project-links">
+                    {project.links.map((projectLink) => (
+                      <a
+                        key={projectLink.href}
+                        href={projectLink.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="project-link magnetic"
+                        onMouseMove={handleMagneticMove}
+                        onMouseLeave={handleMagneticLeave}
+                      >
+                        {projectLink.isGithub ? <FaGithub /> : <FaExternalLinkAlt />}
+                        <span>{projectLink.label}</span>
+                      </a>
+                    ))}
+                  </div>
                 </div>
                 <p>{project.summary}</p>
                 <ul className="pill-list">
